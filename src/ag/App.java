@@ -1,9 +1,10 @@
 package ag;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import res.conexao.ConnectionFactory;
 import res.dh.DH;
@@ -35,7 +36,50 @@ public class App {
 	public static void main(String[] args) throws SQLException{
 		setup();
 		
-		System.out.println(geraCromossomo());
+		Cromossomo[] pop = new Cromossomo[100];
+		for(int i=0; i<pop.length; i++){
+			pop[i] = geraCromossomo();
+			System.out.println(i+" : "+pop[i].getFitness());
+		}
+		
+		int rCount = 0;
+		while(true){
+			Cromossomo c1 = pop[(int)(Math.random()*pop.length)];
+			Cromossomo c2 = pop[(int)(Math.random()*pop.length)];
+			
+			getCruzamento(c1, c2);
+			break;
+		}
+	}
+	
+	private static Cromossomo getCruzamento(Cromossomo c1, Cromossomo c2){
+		Map<DH, Celula[]> map = new HashMap<DH, Celula[]>();
+		
+		putCelulas(map, c1);
+		putCelulas(map, c2);
+		
+		ArrayList<Celula> gene = new ArrayList<Celula>();
+		Iterator<DH> it = map.keySet().iterator();
+		while(it.hasNext()){
+			DH dh = it.next();
+			
+			Celula[] cls = map.get(dh);
+			
+			
+		}
+		return null;
+	}
+	private static void putCelulas(Map<DH, Celula[]> map, Cromossomo cr){
+		for(Celula c : cr.getGene()){
+			Celula[] ca = map.get(c.getDH());
+			if(ca == null){
+				ca = new Celula[2];
+				ca[0] = c;
+				map.put(c.getDH(), ca);
+			}else{
+				ca[1] = c;
+			}
+		}
 	}
 
 	private static Cromossomo geraCromossomo(){
@@ -69,8 +113,6 @@ public class App {
 			double indexV = indexP-indexE;
 
 			indexV *= indexV;
-
-			System.out.println(indexP+" : "+indexE+" : "+indexV);
 
 			fitness -= indexV;
 		}
